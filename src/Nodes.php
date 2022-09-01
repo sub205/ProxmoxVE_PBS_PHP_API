@@ -2114,12 +2114,13 @@ class Nodes
     * @param integer  $vmid     Only list tasks for this VM.
     * @param integer  $start
   */
-  public function Tasks($node, $errors = null, $limit = null, $vmid = null, $start = null)
+  public function Tasks($node, $errors = null, $limit = null, $vmid = null, $start = null, $running = null)
   {
       $optional['errors']  = !empty($errors) ? $errors : false;
       $optional['limit']   = !empty($limit) ? $limit : null;
       $optional['vmid']    = !empty($vmid) ? $vmid : null;
       $optional['start']   = !empty($start) ? $start : null;
+      $optional['running'] = !empty($running) ? $running : null;
       return Request::Request("/nodes/$node/tasks", $optional);
   }
   /**

@@ -20,6 +20,7 @@ class Request
   protected static $token_value = false;
   protected static $realm;
   protected static $port;
+  protected static $pbs;
   protected static $ticket;
   protected static $Client;
 
@@ -46,6 +47,7 @@ class Request
     self::$username     = !empty($configure['username'])      ? $configure['username']    : $check = true;
     self::$realm        = !empty($configure['realm'])         ? $configure['realm']       : 'pam'; // pam - pve - ..
     self::$port         = !empty($configure['port'])          ? $configure['port']        : 8006;
+		self::$pbs					= !empty($configure['pbs'])           ? $configure['pbs']         : false;
 
     if ($check) {
       throw new ProxmoxException(
@@ -76,9 +78,10 @@ class Request
     } else {
       $data = [
         'username'  => self::$username,
-        'password'  => self::$password,
-        'realm'     => self::$realm,
+        'password'  => self::$password
       ];
+      
+      if (! self::$pbs) $data['realm'] = self::$realm;
 
       $response = self::$Client->post("https://" . self::$hostname . ":" . self::$port . "/api2/json/access/ticket", $data);
 
@@ -89,7 +92,11 @@ class Request
       // set header
       self::$Client->setHeader('CSRFPreventionToken', $response->data->CSRFPreventionToken);
       // set cookie
-      self::$Client->setCookie('PVEAuthCookie', $response->data->ticket);
+      if (self::$pbs) {
+      	self::$Client->setCookie('PBSAuthCookie', $response->data->ticket);
+      } else {
+      	self::$Client->setCookie('PVEAuthCookie', $response->data->ticket);
+      }
     }
 
     return true;
@@ -105,7 +112,9 @@ class Request
     if (substr($path, 0, 1) != '/') {
       $path = '/' . $path;
     }
+
     $api = "https://" . self::$hostname . ":" . self::$port . "/api2/json" . $path;
+
     switch ($method) {
       case "GET":
         return self::$Client->get($api, $params);
