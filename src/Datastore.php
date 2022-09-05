@@ -22,6 +22,16 @@ class Datastore
   }
 
   /**
+    * list available datastores
+    * GET /admin/datastore
+  */
+  public function List()
+  {
+      return Request::Request("/admin/datastore/");
+  }
+
+
+  /**
     * Get file from snapshot
     * GET /admin/datastore/{backupname}/download-decoded?backup-id={$backupid}&backup-type=vm&backup-time={$backuptime}&file-name=qemu-server.conf.blob
     * @param string   $poolid

@@ -86,7 +86,11 @@ class Request
       $response = self::$Client->post("https://" . self::$hostname . ":" . self::$port . "/api2/json/access/ticket", $data);
 
       if (!$response) {
-        throw new ProxmoxException('Request params empty');
+        throw new ProxmoxException('no response from server or empty response, port closed or service down?');
+      }
+      
+      if ($response == 'permission check failed.') {
+				throw new ProxmoxException('login failed.');      	
       }
 
       // set header

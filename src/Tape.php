@@ -50,7 +50,7 @@ class Tape
   public function MediaLabel($drive, $label, $pool)
   {
   		$data = [
-  			'drive' 			=> $drive,
+  			//'drive' 			=> $drive,
   			'label-text' 	=> $label,
   			'pool' 				=> $pool
   		];
